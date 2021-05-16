@@ -1,12 +1,40 @@
-from flask import Flask
+import os
+
+from flask import Flask, render_template
+
+# Accessing data repository
+
+# from data_repository import DataRepository
+#
+# key = os.getenv("AZURE_KEY")
+# data_repository = DataRepository(database_name="we_scale",
+#                                  endpoint_address="https://we-scale.documents.azure.com:443/",
+#                                  private_access_key=key,
+#                                  static_data_container_name="we_scale_static",
+#                                  history_data_container_name="we_scale_history")
+# print(data_repository.get_static_data())
+
+# Acessing api service
+
+# from api_service import ApiService
+#
+# riot_api_key = os.getenv("RIOT_API_KEY")
+# api_service = ApiService(riot_api_key=riot_api_key, settings={
+#     "version_from_match": "latest",
+#     "default_region": "EUNE"
+# })
+# api_service.print_summoner("Katsuragii", "EUNE")
+
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def hello_world():
-    return 'Hello World!'
+    return render_template('home.html')
 
 
 if __name__ == '__main__':
-    app.run()
+    app.jinja_env.auto_reload = True
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
+    app.run(debug=True, host='0.0.0.0')
