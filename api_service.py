@@ -1,7 +1,6 @@
 # This file is responsible only for communicating with API and returning data
 
 from cassiopeia import Summoner, Champion, get_champion
-from cassiopeia.datastores.riotapi.common import APIError
 import cassiopeia as cass
 
 
@@ -14,10 +13,6 @@ class ApiService:
             raise Exception("Environmental variable for Riot API key is not set!")
         cass.set_riot_api_key(riot_api_key)
 
-    def print_summoner(name: str, region: str):
-        summoner = Summoner(name=name, region=region)
-        print("Name:", summoner.name)
-        print("ID:", summoner.id)
-        print("Account ID:", summoner.account_id)
-        print("Level:", summoner.level)
-        print("Ranks:", summoner.ranks)
+    def get_summoner(self, name):
+        summoner = Summoner(name=name, region='EUNE')
+        return summoner

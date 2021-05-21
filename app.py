@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 # Accessing data repository
 
@@ -16,15 +16,13 @@ from flask import Flask, render_template
 
 # Acessing api service
 
-# from api_service import ApiService
-#
-# riot_api_key = os.getenv("RIOT_API_KEY")
-# api_service = ApiService(riot_api_key=riot_api_key, settings={
-#     "version_from_match": "latest",
-#     "default_region": "EUNE"
-# })
-# api_service.print_summoner("Katsuragii", "EUNE")
+from api_service import ApiService
 
+riot_api_key = os.getenv("RIOT_API_KEY")
+api_service = ApiService(riot_api_key=riot_api_key, settings={
+    "version_from_match": "latest",
+    "default_region": "EUNE"
+})
 
 app = Flask(__name__)
 
@@ -32,6 +30,13 @@ app = Flask(__name__)
 @app.route('/')
 def hello_world():
     return render_template('home.html')
+
+
+@app.route('/search', methods=["POST"])
+def search():
+    summonerName = request.form.get("summonerName")
+    summoner = api_service.get_summoner(summonerName)
+    return render_template('match_list.html', summoner=summoner)
 
 
 if __name__ == '__main__':
