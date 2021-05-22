@@ -1,9 +1,35 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="container">
-	<div class="row">
-		Match list for: {{ summoner.name }} (id: {{ summoner.id }})
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-8 offset-lg-2 mt-4">
+			<h4 class="mb-4">Match history of: {{ summoner_name }}</h4>
+				<div class="list-group">
+					{% for match in matches %}
+						<a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+							<div class="row">
+								<div class="col-3">
+									<img src="{{ match|get_champ_image(summoner_name) }}" class="img-fluid">
+								</div>
+								<div class="col-9">
+									<div class="d-flex w-100 justify-content-between">
+										<h5 class="mb-1">{{ match|get_champ_name(summoner_name) }}</h5>
+										<small>{{ match.creation.humanize() }}</small>
+									</div>
+									<p class="mb-3">
+										<span><b>Stats:</b> {{ match|get_stats(summoner_name) }}</span>
+										<br />
+										<span><b>CS:</b> {{ match|get_cs(summoner_name) }}</span>
+									</p>
+									<small>{{ match.queue|get_queue_name }}</small>
+								</div>
+
+							</div>
+						</a>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
 	</div>
-</div>
 {% endblock %}

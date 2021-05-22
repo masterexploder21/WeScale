@@ -1,5 +1,6 @@
 import os
 
+from cassiopeia import Queue, Champion
 from flask import Flask, render_template, request
 
 # Accessing data repository
@@ -27,6 +28,37 @@ api_service = ApiService(riot_api_key=riot_api_key, settings={
 app = Flask(__name__)
 
 
+def get_queue_name(value):
+    return value.name.capitalize().replace('_', ' ')
+
+
+def get_champ_name(value, name):
+    participant = next(filter(lambda x: x.summoner.name == name, value.participants))
+    return participant.champion.name
+
+
+def get_champ_image(value, name):
+    participant = next(filter(lambda x: x.summoner.name == name, value.participants))
+    return participant.champion.image.url
+
+
+def get_stats(value, name):
+    participant = next(filter(lambda x: x.summoner.name == name, value.participants))
+    return f'{participant.stats.kills}/{participant.stats.deaths}/{participant.stats.assists}'
+
+
+def get_cs(value, name):
+    participant = next(filter(lambda x: x.summoner.name == name, value.participants))
+    return participant.stats.total_minions_killed + participant.stats.neutral_minions_killed
+
+
+app.jinja_env.filters['get_queue_name'] = get_queue_name
+app.jinja_env.filters['get_champ_name'] = get_champ_name
+app.jinja_env.filters['get_champ_image'] = get_champ_image
+app.jinja_env.filters['get_stats'] = get_stats
+app.jinja_env.filters['get_cs'] = get_cs
+
+
 @app.route('/')
 def hello_world():
     return render_template('home.html')
@@ -34,9 +66,9 @@ def hello_world():
 
 @app.route('/search', methods=["POST"])
 def search():
-    summonerName = request.form.get("summonerName")
-    summoner = api_service.get_summoner(summonerName)
-    return render_template('match_list.html', summoner=summoner)
+    summoner_name = request.form.get("summonerName")
+    matches_dict = api_service.get_match_list(name=summoner_name, begin_index=0, end_index=5)
+    return render_template('match_list.html', matches=matches_dict, summoner_name=summoner_name)
 
 
 if __name__ == '__main__':

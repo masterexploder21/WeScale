@@ -1,5 +1,5 @@
 # This file is responsible only for communicating with API and returning data
-
+from PIL._imagingmorph import match
 from cassiopeia import Summoner, Champion, get_champion
 import cassiopeia as cass
 
@@ -16,3 +16,16 @@ class ApiService:
     def get_summoner(self, name):
         summoner = Summoner(name=name, region='EUNE')
         return summoner
+
+    def get_match_list(self, name, begin_index, end_index):
+        matches = cass.get_match_history(summoner=self.get_summoner(name), begin_index=begin_index,
+                                         end_index=end_index)
+        detailed_matches = list()
+        for single_match in list(matches):
+            match_details = cass.get_match(id=single_match.id, region='EUNE')
+            detailed_matches.append(match_details.to_dict())
+        return matches
+
+    @staticmethod
+    def get_main_participant(name, match_dict):
+        return next(filter(lambda x: x['summonerName'] == name, match_dict.participants))
