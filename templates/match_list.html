@@ -3,8 +3,10 @@
 
 	<div class="container">
 		<div class="row">
-			<div class="col-lg-8 offset-lg-2 mt-4">
-			<h4 class="mb-4">Match history of: {{ summoner_name }}</h4>
+			<div class="col-lg-8 offset-lg-2 mt-4 mb-5">
+
+				<h4 class="mb-4">Match history of: {{ summoner_name }}</h4>
+
 				<div class="list-group">
 					{% for match in matches %}
 						<a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
@@ -19,16 +21,40 @@
 									</div>
 									<p class="mb-3">
 										<span><b>Stats:</b> {{ match|get_stats(summoner_name) }}</span>
-										<br />
+										<br/>
 										<span><b>CS:</b> {{ match|get_cs(summoner_name) }}</span>
 									</p>
 									<small>{{ match.queue|get_queue_name }}</small>
 								</div>
-
 							</div>
 						</a>
 					{% endfor %}
 				</div>
+
+				<form action="/search" method="post" class="row justify-content-between mt-3">
+
+					<input type="hidden" value="{{ summoner_name }}" name="summonerName"/>
+					<input type="hidden" value="{{ page }}" name="page"/>
+
+					{% if (page | int) > 1 %}
+						<div class="col-2">
+							<button type="submit" class="btn btn-primary" value="search_prev" name="submit_button">
+								Previous
+							</button>
+						</div>
+					{% else %}
+						<div class="col-2"></div>
+					{% endif %}
+
+					<div class="col-2 align-self-center mb-1">Page: {{ page }}</div>
+
+					<div class="col-2">
+						<button type="submit" class="btn btn-primary float-right" value="search_next"
+						        name="submit_button">Next
+						</button>
+					</div>
+
+				</form>
 			</div>
 		</div>
 	</div>

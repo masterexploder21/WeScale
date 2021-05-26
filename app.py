@@ -66,9 +66,28 @@ def hello_world():
 
 @app.route('/search', methods=["POST"])
 def search():
+    submitted_action = request.form.get("submit_button")
     summoner_name = request.form.get("summonerName")
-    matches_dict = api_service.get_match_list(name=summoner_name, begin_index=0, end_index=5)
-    return render_template('match_list.html', matches=matches_dict, summoner_name=summoner_name)
+    page = 0 if request.form.get("page") is None else int(request.form.get("page"))
+    begin_index = 0
+    end_index = 0
+
+    if submitted_action == 'search':
+        begin_index = 0
+        end_index = 5
+        page = 1
+    elif submitted_action == 'search_next':
+        begin_index = 5*page
+        end_index = 5*page+5
+        page += 1
+    elif submitted_action == 'search_prev':
+        begin_index = 5*page-5
+        end_index = 5*page
+        page -= 1
+
+    matches_dict = api_service.get_match_list(name=summoner_name, begin_index=begin_index, end_index=end_index)
+
+    return render_template('match_list.html', matches=matches_dict, summoner_name=summoner_name, page=page)
 
 
 if __name__ == '__main__':
