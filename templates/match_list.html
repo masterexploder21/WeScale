@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "base_layout.html" %}
 {% block content %}
 
 	<div class="container">
@@ -9,25 +9,35 @@
 
 				<div class="list-group">
 					{% for match in matches %}
-						<a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-							<div class="row">
-								<div class="col-3">
-									<img src="{{ match|get_champ_image(summoner_name) }}" class="img-fluid">
+						<form action="/details" method="post">
+							<input type="hidden" value="{{ match.id }}" name="match"/>
+							<button class="w-100" type="Submit"
+							        style="background: none; color: inherit; border: none; padding: 0; font: inherit; outline: inherit">
+								<div class="text">
+									<a href="#"
+									   class="list-group-item list-group-item-action flex-column align-items-start"
+									   style="background-color: {{ match|get_background_color(summoner_name) }}">
+										<div class="row">
+											<div class="col-3">
+												<img src="{{ match|get_champ_image(summoner_name) }}" class="img-fluid">
+											</div>
+											<div class="col-9" style="text-align: start">
+												<div class="d-flex w-100 justify-content-between">
+													<h5 class="mb-1">{{ match|get_champ_name(summoner_name) }}</h5>
+													<small>{{ match.creation.humanize() }}</small>
+												</div>
+												<p class="mb-3 mt-2">
+													<span><b>Stats:</b> {{ match|get_stats(summoner_name) }}</span>
+													<br/>
+													<span><b>CS:</b> {{ match|get_cs(summoner_name) }}</span>
+												</p>
+												<small>{{ match.queue|get_queue_name }}</small>
+											</div>
+										</div>
+									</a>
 								</div>
-								<div class="col-9">
-									<div class="d-flex w-100 justify-content-between">
-										<h5 class="mb-1">{{ match|get_champ_name(summoner_name) }}</h5>
-										<small>{{ match.creation.humanize() }}</small>
-									</div>
-									<p class="mb-3">
-										<span><b>Stats:</b> {{ match|get_stats(summoner_name) }}</span>
-										<br/>
-										<span><b>CS:</b> {{ match|get_cs(summoner_name) }}</span>
-									</p>
-									<small>{{ match.queue|get_queue_name }}</small>
-								</div>
-							</div>
-						</a>
+							</button>
+						</form>
 					{% endfor %}
 				</div>
 

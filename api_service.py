@@ -26,6 +26,9 @@ class ApiService:
             detailed_matches.append(match_details.to_dict())
         return matches
 
+    def get_match(self, match_id):
+        return cass.get_match(id=int(match_id), region='EUNE')
+
     @staticmethod
     def get_main_participant(name, match_dict):
         return next(filter(lambda x: x['summonerName'] == name, match_dict.participants))

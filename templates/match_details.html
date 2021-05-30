@@ -1,0 +1,77 @@
+{% extends "base_layout.html" %}
+{% block content %}
+
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 mt-4 mb-5">
+				<div class="row">
+					{% if match.red_team.win %}
+						<h3>Victory</h3>
+					{% else %}
+						<h3>Defeat</h3>
+					{% endif %}
+					<table class="table table-bordered table-hover">
+						<thead style="background-color: darkred; color: white">
+						<tr>
+							<th scope="col" style="width: 2.5%">Champion</th>
+							<th scope="col">Name</th>
+							<th scope="col">Score (KDA)</th>
+							<th scope="col">Damage</th>
+							<th scope="col">Creep score</th>
+							<th scope="col">Vision score</th>
+						</tr>
+						</thead>
+						<tbody>
+						{% for player in match.red_team.participants %}
+							<tr>
+								<td>
+									<img src="{{ player.champion.image.url }}" class="img-fluid mx-auto d-block" style="max-width: 60%" />
+								</td>
+								<td class="align-middle" style="width: 22.5%">{{ player.summoner.name }}</td>
+								<td class="align-middle" style="width: 15%">{{ match|get_stats(player.summoner.name) }}</td>
+								<td class="align-middle" style="width: 10%">{{ player.stats.total_damage_dealt_to_champions }}</td>
+								<td class="align-middle" style="width: 10%">{{ match|get_cs(player.summoner.name) }}</td>
+								<td class="align-middle" style="width: 10%">{{ player.stats.vision_score }}</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				<div class="row mt-4">
+					{% if match.blue_team.win %}
+						<h3>Victory</h3>
+					{% else %}
+						<h3>Defeat</h3>
+					{% endif %}
+					<table class="table table-bordered table-hover">
+						<thead style="background-color: darkblue; color: white">
+						<tr>
+							<th scope="col" style="width: 5%">Champion</th>
+							<th scope="col">Name</th>
+							<th scope="col">Score (KDA)</th>
+							<th scope="col">Damage</th>
+							<th scope="col">Creep score</th>
+							<th scope="col">Vision score</th>
+						</tr>
+						</thead>
+						<tbody>
+						{% for player in match.blue_team.participants %}
+							<tr>
+								<td>
+									<img src="{{ player.champion.image.url }}" class="img-fluid mx-auto d-block" style="max-width: 60%" />
+								</td>
+								<td class="align-middle" style="width: 22.5%">{{ player.summoner.name }}</td>
+								<td class="align-middle" style="width: 15%">{{ match|get_stats(player.summoner.name) }}</td>
+								<td class="align-middle" style="width: 10%">{{ player.stats.total_damage_dealt_to_champions }}</td>
+								<td class="align-middle" style="width: 10%">{{ match|get_cs(player.summoner.name) }}</td>
+								<td class="align-middle" style="width: 10%">{{ player.stats.vision_score }}</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

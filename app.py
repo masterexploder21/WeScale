@@ -44,7 +44,7 @@ def get_champ_image(value, name):
 
 def get_stats(value, name):
     participant = next(filter(lambda x: x.summoner.name == name, value.participants))
-    return f'{participant.stats.kills}/{participant.stats.deaths}/{participant.stats.assists}'
+    return f'{participant.stats.kills}/{participant.stats.deaths}/{participant.stats.assists} ({round((int(participant.stats.kills) + int(participant.stats.assists)) / int(participant.stats.deaths), 2)}) '
 
 
 def get_cs(value, name):
@@ -52,16 +52,38 @@ def get_cs(value, name):
     return participant.stats.total_minions_killed + participant.stats.neutral_minions_killed
 
 
+def get_background_color(value, name):
+    red_team = value.red_team.to_dict()
+    if name in map(lambda y: y["summonerName"], red_team["participants"]):
+        if red_team["isWinner"]:
+            return "#00ff0057"
+        else:
+            return "#ff00184d"
+    else:
+        if red_team["isWinner"]:
+            return "#ff00184d"
+        else:
+            return "#00ff0057"
+
+
 app.jinja_env.filters['get_queue_name'] = get_queue_name
 app.jinja_env.filters['get_champ_name'] = get_champ_name
 app.jinja_env.filters['get_champ_image'] = get_champ_image
 app.jinja_env.filters['get_stats'] = get_stats
 app.jinja_env.filters['get_cs'] = get_cs
+app.jinja_env.filters['get_background_color'] = get_background_color
 
 
 @app.route('/')
-def hello_world():
+def home():
     return render_template('home.html')
+
+
+@app.route('/details', methods=["POST"])
+def details():
+    match_id = request.form.get("match")
+    match = api_service.get_match(match_id)
+    return render_template('match_details.html', match=match)
 
 
 @app.route('/search', methods=["POST"])
@@ -77,12 +99,12 @@ def search():
         end_index = 5
         page = 1
     elif submitted_action == 'search_next':
-        begin_index = 5*page
-        end_index = 5*page+5
+        begin_index = 5 * page
+        end_index = 5 * page + 5
         page += 1
     elif submitted_action == 'search_prev':
-        begin_index = 5*page-5
-        end_index = 5*page
+        begin_index = 5 * page - 5
+        end_index = 5 * page
         page -= 1
 
     matches_dict = api_service.get_match_list(name=summoner_name, begin_index=begin_index, end_index=end_index)
