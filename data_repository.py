@@ -34,19 +34,18 @@ class DataRepository:
             offer_throughput=400
         )
 
-        # TODO: add second container
-        # self.history_container = self.database.create_container_if_not_exists(
-        #     id=self.history_data_container_name,
-        #     partition_key=PartitionKey(path="/id"),
-        #     offer_throughput=400
-        # )
+    def get_gold_earned(self):
+        query = "SELECT * FROM c WHERE c.id = \"gold_earned\""
 
-    def get_static_data(self):
-        query = "SELECT * FROM c"
-
-        items = list(self.static_container.query_items(
+        dictionary = next(self.static_container.query_items(
             query=query,
             enable_cross_partition_query=True
         ))
+        dictionary.pop('id')
+        stripped_dictionary = {}
 
-        return items
+        for item in dictionary:
+            if not item.startswith('_'):
+                stripped_dictionary[item] = dictionary[item]
+
+        return stripped_dictionary

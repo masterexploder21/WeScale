@@ -1,3 +1,4 @@
+import json
 import os
 
 from cassiopeia import Queue, Champion
@@ -5,15 +6,14 @@ from flask import Flask, render_template, request
 
 # Accessing data repository
 
-# from data_repository import DataRepository
-#
-# key = os.getenv("AZURE_KEY")
-# data_repository = DataRepository(database_name="we_scale",
-#                                  endpoint_address="https://we-scale.documents.azure.com:443/",
-#                                  private_access_key=key,
-#                                  static_data_container_name="we_scale_static",
-#                                  history_data_container_name="we_scale_history")
-# print(data_repository.get_static_data())
+from data_repository import DataRepository
+
+key = os.getenv("AZURE_KEY")
+data_repository = DataRepository(database_name="we_scale",
+                                 endpoint_address="https://we-scale.documents.azure.com:443/",
+                                 private_access_key=key,
+                                 static_data_container_name="we_scale_static",
+                                 history_data_container_name="we_scale_history")
 
 # Acessing api service
 
@@ -79,13 +79,6 @@ def home():
     return render_template('home.html')
 
 
-@app.route('/details', methods=["POST"])
-def details():
-    match_id = request.form.get("match")
-    match = api_service.get_match(match_id)
-    return render_template('match_details.html', match=match)
-
-
 @app.route('/search', methods=["POST"])
 def search():
     submitted_action = request.form.get("submit_button")
@@ -96,20 +89,36 @@ def search():
 
     if submitted_action == 'search':
         begin_index = 0
-        end_index = 5
+        end_index = 10
         page = 1
     elif submitted_action == 'search_next':
-        begin_index = 5 * page
-        end_index = 5 * page + 5
+        begin_index = 10 * page
+        end_index = 10 * page + 10
         page += 1
     elif submitted_action == 'search_prev':
-        begin_index = 5 * page - 5
-        end_index = 5 * page
+        begin_index = 10 * page - 10
+        end_index = 10 * page
         page -= 1
 
     matches_dict = api_service.get_match_list(name=summoner_name, begin_index=begin_index, end_index=end_index)
 
     return render_template('match_list.html', matches=matches_dict, summoner_name=summoner_name, page=page)
+
+
+@app.route('/details', methods=["POST"])
+def details():
+    match_id = request.form.get("match")
+    summoner_name = request.form.get("summonerName")
+    match = api_service.get_match(match_id)
+    # objectives_taken, average_kda
+    gold_earned = data_repository.get_gold_earned()
+    participant = next(filter(lambda x: x.summoner.name == summoner_name, match.participants))
+    gold_earned['YOU'] = participant.stats.gold_earned
+    gold_earned = dict(sorted(gold_earned.items(), key=lambda item: item[1]))
+    gold_index = list(gold_earned.keys()).index('YOU')
+    gold_max_value = round(int(list(gold_earned.values())[-1]) * 1.2, -3)
+    return render_template('match_details.html', match=match, gold_labes=gold_earned.keys(),
+                           gold_values=gold_earned.values(), gold_index=gold_index, gold_max_value=gold_max_value)
 
 
 if __name__ == '__main__':

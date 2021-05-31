@@ -25,12 +25,16 @@
 						{% for player in match.red_team.participants %}
 							<tr>
 								<td>
-									<img src="{{ player.champion.image.url }}" class="img-fluid mx-auto d-block" style="max-width: 60%" />
+									<img src="{{ player.champion.image.url }}" class="img-fluid mx-auto d-block"
+									     style="max-width: 60%"/>
 								</td>
 								<td class="align-middle" style="width: 22.5%">{{ player.summoner.name }}</td>
-								<td class="align-middle" style="width: 15%">{{ match|get_stats(player.summoner.name) }}</td>
-								<td class="align-middle" style="width: 10%">{{ player.stats.total_damage_dealt_to_champions }}</td>
-								<td class="align-middle" style="width: 10%">{{ match|get_cs(player.summoner.name) }}</td>
+								<td class="align-middle"
+								    style="width: 15%">{{ match|get_stats(player.summoner.name) }}</td>
+								<td class="align-middle"
+								    style="width: 10%">{{ player.stats.total_damage_dealt_to_champions }}</td>
+								<td class="align-middle"
+								    style="width: 10%">{{ match|get_cs(player.summoner.name) }}</td>
 								<td class="align-middle" style="width: 10%">{{ player.stats.vision_score }}</td>
 							</tr>
 						{% endfor %}
@@ -58,17 +62,76 @@
 						{% for player in match.blue_team.participants %}
 							<tr>
 								<td>
-									<img src="{{ player.champion.image.url }}" class="img-fluid mx-auto d-block" style="max-width: 60%" />
+									<img src="{{ player.champion.image.url }}" class="img-fluid mx-auto d-block"
+									     style="max-width: 60%"/>
 								</td>
 								<td class="align-middle" style="width: 22.5%">{{ player.summoner.name }}</td>
-								<td class="align-middle" style="width: 15%">{{ match|get_stats(player.summoner.name) }}</td>
-								<td class="align-middle" style="width: 10%">{{ player.stats.total_damage_dealt_to_champions }}</td>
-								<td class="align-middle" style="width: 10%">{{ match|get_cs(player.summoner.name) }}</td>
+								<td class="align-middle"
+								    style="width: 15%">{{ match|get_stats(player.summoner.name) }}</td>
+								<td class="align-middle"
+								    style="width: 10%">{{ player.stats.total_damage_dealt_to_champions }}</td>
+								<td class="align-middle"
+								    style="width: 10%">{{ match|get_cs(player.summoner.name) }}</td>
 								<td class="align-middle" style="width: 10%">{{ player.stats.vision_score }}</td>
 							</tr>
 						{% endfor %}
 						</tbody>
 					</table>
+				</div>
+
+
+				<div class="row mt-5 justify-content-md-center">
+					<h3>Gold earned:</h3>
+				</div>
+				<div class="row mt-3 justify-content-md-center">
+					<canvas id="chart" width="600" height="400"></canvas>
+					<script>
+                        // bar chart data
+                        var barData = {
+                            labels: [
+                                {% for item in gold_labes %}
+                                    "{{ item }}",
+                                {% endfor %}
+                            ],
+
+                            datasets: [{
+                                fillColor: "rgba(151,187,205,0.2)",
+                                strokeColor: "rgba(151,187,205,1)",
+                                pointColor: "rgba(151,187,205,1)",
+                                data: [
+                                    {% for item in gold_values %}
+                                        "{{ item }}",
+                                    {% endfor %}
+                                ]
+                            }
+                            ]
+                        }
+
+                        // get bar chart canvas
+                        var mychart = document.getElementById("chart").getContext("2d");
+
+                        steps = 10
+                        max = {{ gold_max_value }}
+
+                            // draw bar chart
+                            wpChartChartTitleBar = new Chart(mychart).Bar(barData, {
+                                    scaleOverride: true,
+                                    scaleSteps: steps,
+                                    scaleStepWidth: Math.ceil(max / steps),
+                                    scaleStartValue: 0,
+                                    scaleShowVerticalLines: true,
+                                    scaleShowGridLines: true,
+                                    barShowStroke: true,
+                                    scaleShowLabels: true
+                                }
+                            );
+
+                        wpChartChartTitleBar.datasets[0].bars[{{ gold_index }}].fillColor = "rgba(32,161,171)";
+                        wpChartChartTitleBar.datasets[0].bars[{{ gold_index }}].strokeColor = "rgba(32,161,171)";
+
+                        wpChartChartTitleBar.update();
+
+					</script>
 				</div>
 			</div>
 		</div>
