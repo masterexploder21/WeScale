@@ -1,0 +1,47 @@
+<div class="row mt-3 justify-content-md-center">
+	<canvas id="{{ chart.name }}" width="600" height="400"></canvas>
+	<script>
+        var barData = {
+            labels: [
+                {% for item in chart.chart_labels %}
+                    "{{ item }}",
+                {% endfor %}
+            ],
+
+            datasets: [{
+                fillColor: "rgba(151,187,205,0.2)",
+                strokeColor: "rgba(151,187,205,1)",
+                pointColor: "rgba(151,187,205,1)",
+                data: [
+                    {% for item in chart.chart_values %}
+                        "{{ item }}",
+                    {% endfor %}
+                ]
+            }
+            ]
+        }
+
+        var myChart = document.getElementById("{{ chart.name }}").getContext("2d");
+
+        steps = 10
+        max = {{ chart.max_value }}
+
+            wpChartChartTitleBar = new Chart(myChart).Bar(barData, {
+                    scaleOverride: true,
+                    scaleSteps: steps,
+                    scaleStepWidth: Math.ceil(max / steps),
+                    scaleStartValue: 0,
+                    scaleShowVerticalLines: true,
+                    scaleShowGridLines: true,
+                    barShowStroke: true,
+                    scaleShowLabels: true
+                }
+            );
+
+        wpChartChartTitleBar.datasets[0].bars[{{ chart.player_index }}].fillColor = "rgba(32,161,171)";
+        wpChartChartTitleBar.datasets[0].bars[{{ chart.player_index }}].strokeColor = "rgba(32,161,171)";
+
+        wpChartChartTitleBar.update();
+
+	</script>
+</div>

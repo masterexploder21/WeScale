@@ -1,0 +1,50 @@
+<div class="row mt-5 justify-content-md-center">
+	<h3>Gold earned:</h3>
+</div>
+<div class="row mt-3 justify-content-md-center">
+	<canvas id="chart" width="600" height="400"></canvas>
+	<script>
+        let barData = {
+            labels: [
+                {% for item in vs_labes %}
+                    "{{ item }}",
+                {% endfor %}
+            ],
+
+            datasets: [{
+                fillColor: "rgba(151,187,205,0.2)",
+                strokeColor: "rgba(151,187,205,1)",
+                pointColor: "rgba(151,187,205,1)",
+                data: [
+                    {% for item in vs_values %}
+                        "{{ item }}",
+                    {% endfor %}
+                ]
+            }
+            ]
+        }
+
+        let myChart = document.getElementById("chart").getContext("2d");
+
+        steps = 10
+        max = {{ vs_max_value }}
+
+            wpChartChartTitleBar = new Chart(myChart).Bar(barData, {
+                    scaleOverride: true,
+                    scaleSteps: steps,
+                    scaleStepWidth: Math.ceil(max / steps),
+                    scaleStartValue: 0,
+                    scaleShowVerticalLines: true,
+                    scaleShowGridLines: true,
+                    barShowStroke: true,
+                    scaleShowLabels: true
+                }
+            );
+
+        wpChartChartTitleBar.datasets[0].bars[{{ gold_index }}].fillColor = "rgba(32,161,171)";
+        wpChartChartTitleBar.datasets[0].bars[{{ gold_index }}].strokeColor = "rgba(32,161,171)";
+
+        wpChartChartTitleBar.update();
+
+	</script>
+</div>

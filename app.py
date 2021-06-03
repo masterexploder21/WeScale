@@ -83,6 +83,10 @@ def home():
 def search():
     submitted_action = request.form.get("submit_button")
     summoner_name = request.form.get("summonerName")
+
+    if not summoner_name:
+        return render_template('error.html', error_message="Summoner name cannot be empty!")
+
     page = 0 if request.form.get("page") is None else int(request.form.get("page"))
     begin_index = 0
     end_index = 0
@@ -110,15 +114,14 @@ def details():
     match_id = request.form.get("match")
     summoner_name = request.form.get("summonerName")
     match = api_service.get_match(match_id)
-    # objectives_taken, average_kda
-    gold_earned = data_repository.get_gold_earned()
+
     participant = next(filter(lambda x: x.summoner.name == summoner_name, match.participants))
-    gold_earned['YOU'] = participant.stats.gold_earned
-    gold_earned = dict(sorted(gold_earned.items(), key=lambda item: item[1]))
-    gold_index = list(gold_earned.keys()).index('YOU')
-    gold_max_value = round(int(list(gold_earned.values())[-1]) * 1.2, -3)
-    return render_template('match_details.html', match=match, gold_labes=gold_earned.keys(),
-                           gold_values=gold_earned.values(), gold_index=gold_index, gold_max_value=gold_max_value)
+    gold_chart_data = data_repository.get_gold_chart_data(participant)
+    vision_chart_data = data_repository.get_vs_chart_data(participant)
+    objectives_chart_data = data_repository.get_objectives_chart_data(participant)
+
+    return render_template('match_details.html', match=match, gold_chart=gold_chart_data,
+                           vision_chart=vision_chart_data, objectives_chart=objectives_chart_data)
 
 
 if __name__ == '__main__':

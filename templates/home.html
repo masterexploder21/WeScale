@@ -1,22 +1,33 @@
 {% extends "base_layout.html" %}
 {% block content %}
-<div class="container">
-	<div class="row">
-		<div class="col-lg-6 offset-lg-3 mt-5">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-6 offset-lg-3 mt-5">
 
-			<img src="{{ url_for('static', filename='logo.png') }}" class="img-fluid" alt="Logo">
+				<img src="{{ url_for('static', filename='logo.png') }}" class="img-fluid" alt="Logo">
 
-			<form class="mt-5" action="/search" method="post">
-				<div class="form-group">
-					<label for="summonerName">Enter your summoner name to get your match history</label>
-					<input type="text" class="form-control" id="summonerName" name="summonerName"
-					       placeholder="Enter summoner name"
-					       value="{{ request.form['summonerName'] }}">
-				</div>
-				<button id="btSearch" type="submit" class="btn btn-primary float-right" value="search" name="submit_button">Submit</button>
-			</form>
-
+				<form id="summonerNameForm" class="mt-5" action="/search" method="post">
+					<div class="form-group">
+						<label for="summonerName">Enter your summoner name to get your match history</label>
+						<input type="text" class="form-control" id="summonerName" name="summonerName"
+						       placeholder="Enter summoner name"
+						       value="{{ request.form['summonerName'] }}">
+					</div>
+					<button id="btSearch" type="submit" class="btn btn-primary float-right" value="search"
+					        name="submit_button">Submit
+					</button>
+				</form>
+			</div>
 		</div>
 	</div>
-</div>
+	<script>
+        $(document).ready(function () {
+            $("#btSearch").click(function () {
+                // add spinner to button
+                $(this).html(
+                    `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...`
+                );
+            });
+        });
+	</script>
 {% endblock %}

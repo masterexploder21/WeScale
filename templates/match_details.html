@@ -41,6 +41,7 @@
 						</tbody>
 					</table>
 				</div>
+
 				<div class="row mt-4">
 					{% if match.blue_team.win %}
 						<h3>Victory</h3>
@@ -79,60 +80,30 @@
 					</table>
 				</div>
 
-
 				<div class="row mt-5 justify-content-md-center">
+					<i class="bi-cash-coin mr-2 mb-1" style="font-size: 1.5rem; color: cornflowerblue;"></i>
 					<h3>Gold earned:</h3>
 				</div>
-				<div class="row mt-3 justify-content-md-center">
-					<canvas id="chart" width="600" height="400"></canvas>
-					<script>
-                        // bar chart data
-                        var barData = {
-                            labels: [
-                                {% for item in gold_labes %}
-                                    "{{ item }}",
-                                {% endfor %}
-                            ],
+				{% with chart=gold_chart %}
+					{% include 'chart_layout.html' %}
+				{% endwith %}
 
-                            datasets: [{
-                                fillColor: "rgba(151,187,205,0.2)",
-                                strokeColor: "rgba(151,187,205,1)",
-                                pointColor: "rgba(151,187,205,1)",
-                                data: [
-                                    {% for item in gold_values %}
-                                        "{{ item }}",
-                                    {% endfor %}
-                                ]
-                            }
-                            ]
-                        }
-
-                        // get bar chart canvas
-                        var mychart = document.getElementById("chart").getContext("2d");
-
-                        steps = 10
-                        max = {{ gold_max_value }}
-
-                            // draw bar chart
-                            wpChartChartTitleBar = new Chart(mychart).Bar(barData, {
-                                    scaleOverride: true,
-                                    scaleSteps: steps,
-                                    scaleStepWidth: Math.ceil(max / steps),
-                                    scaleStartValue: 0,
-                                    scaleShowVerticalLines: true,
-                                    scaleShowGridLines: true,
-                                    barShowStroke: true,
-                                    scaleShowLabels: true
-                                }
-                            );
-
-                        wpChartChartTitleBar.datasets[0].bars[{{ gold_index }}].fillColor = "rgba(32,161,171)";
-                        wpChartChartTitleBar.datasets[0].bars[{{ gold_index }}].strokeColor = "rgba(32,161,171)";
-
-                        wpChartChartTitleBar.update();
-
-					</script>
+				<div class="row mt-5 justify-content-md-center">
+					<i class="bi-eye mr-2 mb-1" style="font-size: 1.5rem; color: cornflowerblue;"></i>
+					<h3>Vision score:</h3>
 				</div>
+				{% with chart=vision_chart %}
+					{% include 'chart_layout.html' %}
+				{% endwith %}
+
+				<div class="row mt-5 justify-content-md-center">
+					<i class="bi-building mr-2 mb-1" style="font-size: 1.5rem; color: cornflowerblue;"></i>
+					<h3>Objectives damage:</h3>
+				</div>
+				{% with chart=objectives_chart %}
+					{% include 'chart_layout.html' %}
+				{% endwith %}
+
 			</div>
 		</div>
 	</div>
