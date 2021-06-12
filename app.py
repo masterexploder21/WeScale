@@ -1,22 +1,17 @@
-import json
 import os
 
-from cassiopeia import Queue, Champion
 from flask import Flask, render_template, request
 
 # Accessing data repository
-
 from data_repository import DataRepository
 
 key = os.getenv("AZURE_KEY")
 data_repository = DataRepository(database_name="we_scale",
                                  endpoint_address="https://we-scale.documents.azure.com:443/",
                                  private_access_key=key,
-                                 static_data_container_name="we_scale_static",
-                                 history_data_container_name="we_scale_history")
+                                 static_data_container_name="we_scale_static")
 
-# Acessing api service
-
+# Accessing api service
 from api_service import ApiService
 
 riot_api_key = os.getenv("RIOT_API_KEY")
@@ -44,7 +39,7 @@ def get_champ_image(value, name):
 
 def get_stats(value, name):
     participant = next(filter(lambda x: x.summoner.name == name, value.participants))
-    return f'{participant.stats.kills}/{participant.stats.deaths}/{participant.stats.assists} ({round((int(participant.stats.kills) + int(participant.stats.assists)) / int(participant.stats.deaths), 2)}) '
+    return f'{participant.stats.kills}/{participant.stats.deaths}/{participant.stats.assists} ({round((int(participant.stats.kills) + int(participant.stats.assists)) / int(participant.stats.deaths) if int(participant.stats.deaths) != 0 else 1, 2)}) '
 
 
 def get_cs(value, name):

@@ -1,6 +1,5 @@
 # This file is responsible only for communicating with API and returning data
-from PIL._imagingmorph import match
-from cassiopeia import Summoner, Champion, get_champion
+from cassiopeia import Summoner
 import cassiopeia as cass
 
 

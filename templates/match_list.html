@@ -60,7 +60,7 @@
 					<div class="col-2 align-self-center mb-1">Page: {{ page }}</div>
 
 					<div class="col-2">
-						<button type="submit" class="btn btn-primary float-right" value="search_next"
+						<button id="btNext" type="submit" class="btn btn-primary float-right" value="search_next"
 						        name="submit_button">Next
 						</button>
 					</div>
@@ -69,4 +69,14 @@
 			</div>
 		</div>
 	</div>
+	<script>
+        $(document).ready(function () {
+            $("#btNext").click(function () {
+                // add spinner to button
+                $(this).html(
+                    `<span class="spinner-border spinner-border-sm mt-1" role="status" aria-hidden="true"></span> Next...`
+                );
+            });
+        });
+	</script>
 {% endblock %}

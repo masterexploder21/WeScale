@@ -1,6 +1,5 @@
 # This file is responsible only for database access
-
-from azure.cosmos import exceptions, CosmosClient, PartitionKey
+from azure.cosmos import CosmosClient, PartitionKey
 
 
 class DataRepository:
@@ -10,12 +9,9 @@ class DataRepository:
     database = None
     database_name = ""
     static_data_container_name = ""
-    history_data_container_name = ""
     static_container = None
-    history_container = None
 
-    def __init__(self, endpoint_address, private_access_key, database_name, static_data_container_name,
-                 history_data_container_name):
+    def __init__(self, endpoint_address, private_access_key, database_name, static_data_container_name):
         if private_access_key is None:
             raise Exception("Environmental variable for database private key is not set!")
 
@@ -23,7 +19,6 @@ class DataRepository:
         self.private_access_key = private_access_key
         self.database_name = database_name
         self.static_data_container_name = static_data_container_name
-        self.history_data_container_name = history_data_container_name
 
         self.azure_client = CosmosClient(self.endpoint_address, self.private_access_key)
         self.database = self.azure_client.create_database_if_not_exists(id=self.database_name)
